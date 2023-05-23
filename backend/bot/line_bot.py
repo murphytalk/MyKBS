@@ -19,6 +19,8 @@ auto_reply = [
 
 app = Flask(__name__)
 
+save_msg = None
+
 # get channel_secret and channel_access_token from your environment variable
 channel_secret = os.getenv('LINE_CHANNEL_SECRET', None)
 channel_access_token = os.getenv('LINE_CHANNEL_TOKEN', None)
@@ -39,7 +41,10 @@ def callback():
     signature = request.headers['X-Line-Signature']
     body = request.get_data(as_text=True)
     try:
-        b = json.loads(body)
+        msg = json.loads(body)
+        if save_msg:
+            msg['_incoming'] = True
+            save_msg(msg)
         handler.handle(body, signature)
     except InvalidSignatureError as e:
         print(e)
@@ -55,5 +60,7 @@ def handle_message(event):
         # Send the response message
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response_message))
 
-def run():
+def run(save_msg_callback):
+    global save_msg
+    save_msg = save_msg_callback
     app.run()

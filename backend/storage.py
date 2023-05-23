@@ -67,6 +67,10 @@ class Storage:
             {'$limit': limit}
         ])
         return (ConversationInfo(r[_uuid],r[_topic],detect_language(r[_topic])) for r in result)
+    
+    def save_payload(self,collection_name:str, payload:dict):
+        c = self.db[collection_name]
+        c.insert_one(payload)
 
 if __name__ == '__main__':
     load_env()

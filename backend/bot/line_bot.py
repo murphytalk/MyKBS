@@ -1,7 +1,7 @@
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from linebot.models import MessageEvent, TextMessage, TextSendMessage, VideoMessage , ImageMessage
 import sys
 import os
 import random
@@ -59,6 +59,31 @@ def handle_message(event):
         response_message = random.choice(auto_reply)
         # Send the response message
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response_message))
+
+def save_multimedia_file(message_id,content):
+    filename = f'{message_id}.{content.content_type.split("/")[1]}'
+    print(f'saving {filename}...')
+    with open(filename, 'wb') as f:
+        for chunk in content.iter_content():
+            f.write(chunk)
+
+@handler.add(MessageEvent, message=VideoMessage)
+def handle_video_message(event):
+    message_id = event.message.id  # Get the ID of the video message
+    video_content = line_bot_api.get_message_content(message_id)
+
+    # Process the video content
+    # You can save it to a file or perform further operations
+    print(f'got video message with id: {message_id} and content-type: {video_content.content_type}')
+    save_multimedia_file(message_id,video_content)
+
+@handler.add(MessageEvent, message=ImageMessage)
+def handle_img_message(event):
+    message_id = event.message.id
+    img_content = line_bot_api.get_message_content(message_id)
+
+    print(f'got video message with id: {message_id} and content-type: {img_content.content_type}')
+    save_multimedia_file(message_id,img_content)
 
 def run(save_msg_callback):
     global save_msg

@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: mykbs
+appId: com.murphytalk.mykbs
+productName: MyKBS
 directories:
   buildResources: build
 files:
@@ -13,7 +13,7 @@ asarUnpack:
   - resources/**
 afterSign: build/notarize.js
 win:
-  executableName: mykbs
+  executableName: MyKBS
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -31,8 +31,8 @@ dmg:
 linux:
   target:
     - AppImage
-    - snap
-    - deb
+#    - snap
+#    - deb
   maintainer: electronjs.org
   category: Utility
 appImage:

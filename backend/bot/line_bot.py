@@ -61,7 +61,8 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response_message))
 
 def save_multimedia_file(message_id,content):
-    filename = f'{message_id}.{content.content_type.split("/")[1]}'
+    photos_dir = os.getenv('LINE_IMG_DIR','.')
+    filename = f'{photos_dir}/{message_id}.{content.content_type.split("/")[1]}'
     print(f'saving {filename}...')
     with open(filename, 'wb') as f:
         for chunk in content.iter_content():
